@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<title>ZOZO Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+/* ===================== GLOBAL ===================== */
+
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top, #1a1a28 0%, #0b0b12 50%, #000 100%);
+  font-family: "Segoe UI", sans-serif;
+  color: #e5e7eb;
+}
+
+.page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ===================== HEADER ===================== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-img {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #a855f7;
+  box-shadow: 0 0 15px #a855f7aa;
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: 800;
+  color: #c084fc;
+}
+
+.cart-btn {
+  background: linear-gradient(135deg, #a855f7, #6d28d9);
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(168, 85, 247, 0.4);
+}
+
+/* زر A5QR */
+.more-products-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid #4c1d95;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(15,23,42,0.7);
+}
+
+.more-products-btn:hover {
+  background: #111827;
+}
+
+/* ===================== PRODUCTS ===================== */
+
+.section-title {
+  margin-top: 40px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.products-grid {
+  margin-top: 20px;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.product-card {
+  background: #11111a;
+  border-radius: 20px;
+  padding: 14px;
+  border: 1px solid #27272a;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+  transition: 0.25s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  border-color: #a855f7;
+  box-shadow: 0 18px 50px rgba(168,85,247,0.25);
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.product-desc {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* الصورة كاملة والكلام فوقها */
+.product-image {
+  width: 100%;
+  border-radius: 14px;
+  background-size: contain;   /* تعرض الصورة كاملة */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #020617;
+  aspect-ratio: 4/3;
+}
+
+.product-price {
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+/* صف الكمية + زر الإضافة */
+.product-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.qty-input {
+  width: 60px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 13px;
+  text-align: center;
+}
+
+.btn-add {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 12px 30px rgba(168,85,247,0.4);
+}
+
+/* ===================== CART PANEL (من أعلى) ===================== */
+
+.cart-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -100%;
+  max-height: 75vh;
+  background: #020617;
+  border-bottom: 2px solid #a855f7;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+  padding: 18px 18px 22px;
+  transition: 0.35s ease;
+  overflow-y: auto;
+  z-index: 50;
+  border-radius: 0 0 18px 18px;
+}
+
+.cart-panel.open {
+  top: 0;
+}
+
+.cart-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cart-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #27272a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cart-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cart-item-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cart-item-price {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* زر إزالة المنتج */
+.cart-remove {
+  background: transparent;
+  border: 1px solid #4b5563;
+  color: #f97373;
+  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-remove:hover {
+  border-color: #f97373;
+  background: rgba(248,113,113,0.1);
+}
+
+.cart-footer {
+  margin-top: 15px;
+  padding: 12px;
+  background: #0b1120;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+}
+
+.cart-total-row {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* زر الدفع عبر واتساب */
+.checkout-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  background: #22c55e;
+  color: #000;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* كابسولة ABOUT + الروابط */
+.about-pill {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #a855f7;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.about-pill:hover {
+  background: rgba(168,85,247,0.12);
+}
+
+.about-pill span.icon {
+  font-size: 14px;
+}
+
+.about-box {
+  display: none;
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #e5e7eb;
+}
+
+.about-box a {
+  display: block;
+  margin-top: 4px;
+  color: #c084fc;
+}
+
+/* صندوق نص الطلب */
+.order-preview-box {
+  display: none;
+  margin-top: 12px;
+}
+
+.order-preview-box label {
+  font-size: 12px;
+  color: #9ca3af;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.order-preview-box textarea {
+  width: 100%;
+  min-height: 90px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 12px;
+  padding: 6px 8px;
+  resize: vertical;
+}
+
+.copy-btn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #4b5563;
+  background: #111827;
+  color: #e5e7eb;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* زر إغلاق */
+.close-cart {
+  font-size: 20px;
+  color: #c084fc;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 600px) {
+  .page {
+    padding: 14px;
+  }
+  .header {
+    padding-top: 8px;
+  }
+  .logo-text {
+    font-size: 18px;
+  }
+  .cart-panel {
+    padding: 14px;
+    max-height: 80vh;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<script>
+/* ========== إعدادات التواصل ========= */
+/* رقم واتساب بصيغة دولية بدون + وبدون صفر */
+const WHATSAPP_NUMBER = "9647713922799"; // +20 150 373 7308
+
+let cart = [];
+
+/* ========== إضافة للسلة مع كمية ========== */
+function addToCart(name, price, qtyInputId){
+  const qtyEl = document.getElementById(qtyInputId);
+  let qty = parseInt(qtyEl.value) || 1;
+  if (qty < 1) qty = 1;
+
+  // لو المنتج موجود بالفعل في السلة زود الكمية
+  const existing = cart.find(item => item.name === name && item.price === price);
+  if (existing){
+    existing.qty += qty;
+  } else {
+    cart.push({name, price, qty});
+  }
+
+  renderCart();
+  alert("تمت الإضافة إلى السلة ✔");
+  qtyEl.value = 1;
+}
+
+/* ========== فتح / إغلاق السلة ========== */
+function openCart(){
+  document.getElementById("cartPanel").classList.add("open");
+  renderCart();
+}
+
+function closeCart(){
+  document.getElementById("cartPanel").classList.remove("open");
+}
+
+/* ========== إزالة منتج من السلة ========== */
+function removeFromCart(index){
+  cart.splice(index, 1);
+  renderCart();
+}
+
+/* ========== بناء نص الطلب ========== */
+function buildOrderMessage(){
+  let total = 0;
+  let lines = [];
+
+  lines.push("طلب جديد من متجر ZOZO Store");
+  lines.push("------------------------------");
+
+  cart.forEach(item => {
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+    lines.push(`• ${item.name} × ${item.qty} — $${itemTotal}`);
+  });
+
+  lines.push("------------------------------");
+  lines.push(`الإجمالي: $${total}`);
+  lines.push("");
+  lines.push("من فضلك قم بتأكيد الطلب وطريقة الاستلام/الشحن.");
+
+  const text = lines.join("\n");
+  const urlEncoded = lines.join("%0A");
+
+  // إظهار النص في صندوق المعاينة
+  const box = document.getElementById("orderPreviewBox");
+  const ta  = document.getElementById("orderPreview");
+  box.style.display = "block";
+  ta.value = text;
+
+  return {
+    text,
+    urlEncoded,
+    total
+  };
+}
+
+/* ========== عرض محتوى السلة ========== */
+function renderCart(){
+  let box = document.getElementById("cartItems");
+  box.innerHTML = "";
+
+  let total = 0;
+
+  cart.forEach((item, i) => {
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+
+    box.innerHTML += `
+      <div class="cart-item">
+        <div class="cart-item-main">
+          <div class="cart-item-name">${item.name} × ${item.qty}</div>
+          <div class="cart-item-price">$${itemTotal}</div>
+        </div>
+        <button class="cart-remove" onclick="removeFromCart(${i})">✖</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("totalPrice").innerText = total;
+
+  // لو السلة فاضية اخفي معاينة الطلب
+  if (cart.length === 0){
+    const boxPrev = document.getElementById("orderPreviewBox");
+    if (boxPrev) boxPrev.style.display = "none";
+  }
+}
+
+/* ========== نسخ نص الطلب ========== */
+function copyOrderText(){
+  const ta = document.getElementById("orderPreview");
+  if (!ta || !ta.value.trim()) {
+    alert("لا يوجد نص للنسخ حالياً.");
+    return;
+  }
+
+  ta.select();
+  ta.setSelectionRange(0, 99999);
+
+  try {
+    const ok = document.execCommand("copy");
+    if (ok) {
+      alert("تم نسخ نص الطلب ✅ يمكنك لصقه مباشرة في واتساب.");
+    } else {
+      alert("لم يتم النسخ تلقائياً، حاول نسخ النص يدوياً.");
+    }
+  } catch(e){
+    alert("لم يتم النسخ تلقائياً، حاول نسخ النص يدوياً.");
+  }
+}
+
+/* ========== إتمام الطلب عبر واتساب فقط ========== */
+function checkoutWhatsApp(){
+  if(cart.length === 0){
+    alert("السلة فارغة");
+    return;
+  }
+
+  const msg = buildOrderMessage(); 
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg.urlEncoded}`;
+  window.open(url, "_blank");
+}
+
+/* ========== إظهار/إخفاء صندوق About ========== */
+function toggleAbout(){
+  const box = document.getElementById("aboutBox");
+  box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+</script>
+
+
+<div class="page">
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+
+    <div class="logo-wrap">
+      <img src="logo/z store1 (2).png" class="logo-img" alt="Logo">
+      <div class="logo-text">ZOZO Store</div>
+    </div>
+
+    <button class="cart-btn" onclick="openCart()">🛒 السلة</button>
+
+  </header>
+
+  <!-- زر A5QR -->
+  <button class="more-products-btn" onclick="window.location.href='https://ZOZO'">
+    ZOZO
+  </button>
+
+  <!-- ========== PRODUCTS SECTION ========== -->
+  <h2 class="section-title">منتجات ZOZO Store</h2>
+
+  <div class="products-grid">
+
+    <div class="product-card">
+      <h3 class="product-title">test1</h3>
+      <p class="product-desc">test1 2</p>
+      <div class="product-image" style="background-image:url('logo/z\ store1\ \(2\).png');"></div>
+      <div class="product-price">$39</div>
+      <div class="product-actions">
+        <input id="qty-1" class="qty-input" type="number" min="1" value="1">
+        <button class="btn-add" onclick="addToCart('test1 name', 39, 'qty-1')">إضافة للسلة</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <h3 class="product-title">test2</h3>
+      <p class="product-desc">test2 2</p>
+      <div class="product-image" style="background-image:url('logo/z\ store1\ \(2\).png');"></div>
+      <div class="product-price">$25</div>
+      <div class="product-actions">
+        <input id="qty-2" class="qty-input" type="number" min="1" value="1">
+        <button class="btn-add" onclick="addToCart('test2 name', 25, 'qty-2')">إضافة للسلة</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <h3 class="product-title">test3</h3>
+      <p class="product-desc">test3 2</p>
+      <div class="product-image" style="background-image:url('logo/z\ store1\ \(2\).png');"></div>
+      <div class="product-price">$89</div>
+      <div class="product-actions">
+        <input id="qty-3" class="qty-input" type="number" min="1" value="1">
+        <button class="btn-add" onclick="addToCart('test3 name', 89, 'qty-3')">إضافة للسلة</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ========== CART PANEL (من أعلى) ========== -->
+<div id="cartPanel" class="cart-panel">
+  <div class="cart-header-row">
+    <h3>🛒 السلة</h3>
+    <button onclick="closeCart()" class="close-cart">✖</button>
+  </div>
+
+  <div id="cartItems" style="margin-top:12px;"></div>
+
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      الإجمالي: $<span id="totalPrice">0</span>
+    </div>
+
+    <button class="checkout-btn" onclick="checkoutWhatsApp()">
+      إتمام الطلب عبر واتساب
+    </button>
+
+    <!-- معاينة نص الطلب -->
+    <div id="orderPreviewBox" class="order-preview-box">
+      <label>نص الطلب (جاهز للنسخ والإرسال في واتساب):</label>
+      <textarea id="orderPreview" readonly></textarea>
+      <button class="copy-btn" type="button" onclick="copyOrderText()">نسخ الرسالة</button>
+    </div>
+
+    <div class="about-pill" onclick="toggleAbout()">
+      <span class="icon">ℹ️</span>
+      <span>About</span>
+    </div>
+
+    <div id="aboutBox" class="about-box">
+      <p>تابعنا وتواصل معنا:</p>
+      <a href="https://instagram.com/ZOZO" target="_blank">إنستجرام: @ZOZO</a>
+      <a href="https://wa.me/000000000000" target="_blank">واتساب للتواصل السريع</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
